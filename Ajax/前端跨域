@@ -1,0 +1,153 @@
+前端通信类的问题，主要包括以下内容：
+
+1、什么是同源策略及限制
+同源策略是一个概念，就一句话。有什么限制，就三句话。能说出来即可。
+
+2、前后端如何通信
+如果你不准备，估计也就只能说出ajax。
+
+3、如何创建Ajax
+Ajax在前后端通信中经常用到。做业务时，可以借助第三方的库，比如vue框架里的库、jQuery也有封装好的方法。但如果让你用原生的js去实现，该怎么做？
+
+这就是考察你的动手能力，以及框架原理的掌握。如果能写出来，可以体现出你的基本功。
+
+4、跨域通信的几种方式
+这部分非常重要。无非就是问你：什么是跨域、跨域有什么限制、跨域有几种方式。
+
+下面分别讲解。
+同源策略：限制从一个源加载的文档或脚本如何与来自另一个源的资源进行交互。这是一个用于隔离潜在恶意文件的关键的安全机制。（来自MDN官方的解释）
+
+具体解释：
+
+（1）源包括三个部分：协议、域名、端口（http协议的默认端口是80）。如果有任何一个部分不同，则源不同，那就是跨域了。
+
+（2）限制：这个源的文档没有权利去操作另一个源的文档。这个限制体现在：（要记住）
+
+Cookie、LocalStorage和IndexDB无法获取。
+
+无法获取和操作DOM。
+
+不能发送Ajax请求。我们要注意，Ajax只适合同源的通信。
+
+前后端如何通信
+主要有以下几种方式：
+
+Ajax：不支持跨域。
+
+WebSocket：不受同源策略的限制，支持跨域。
+
+CORS：不受同源策略的限制，支持跨域。一种新的通信协议标准。可以理解成是：同时支持同源和跨域的Ajax。
+
+如何创建Ajax
+关于Ajax请求，可以看本人的基础文章：Ajax入门和发送http请求
+
+在回答 Ajax 的问题时，要回答以下几个方面：
+
+1、XMLHttpRequest 的工作原理
+
+2、兼容性处理
+
+XMLHttpRequest只有在高级浏览器中才支持。在回答问题时，这个兼容性问题不要忽略。
+
+3、事件的出发条件
+
+4、事件的触发顺序
+
+XMLHttpRequest有很多触发事件，每个事件是怎么触发的。
+
+发送 Ajax 请求的五个步骤（XMLHttpRequest的工作原理）
+（1）创建XMLHttpRequest 对象。
+
+（2）使用open方法设置请求的参数。open(method, url, 是否异步)。
+
+（3）发送请求。
+
+（4）注册事件。 注册onreadystatechange事件，状态改变时就会调用。
+
+如果要在数据完整请求回来的时候才调用，我们需要手动写一些判断的逻辑。
+
+（5）获取返回的数据，更新UI。
+
+发送 get 请求和 post 请求
+get请求举例：
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<h1>Ajax 发送 get 请求</h1>
+<input type="button" value="发送get_ajax请求" id='btnAjax'>
+
+<script type="text/javascript">
+    // 绑定点击事件
+    document.querySelector('#btnAjax').onclick = function () {
+        // 发送ajax 请求 需要 五步
+
+        // （1）创建异步对象
+        var ajaxObj = new XMLHttpRequest();
+
+        // （2）设置请求的参数。包括：请求的方法、请求的url。
+        ajaxObj.open('get', '02-ajax.php');
+
+        // （3）发送请求
+        ajaxObj.send();
+
+        //（4）注册事件。 onreadystatechange事件，状态改变时就会调用。
+        //如果要在数据完整请求回来的时候才调用，我们需要手动写一些判断的逻辑。
+        ajaxObj.onreadystatechange = function () {
+            // 为了保证 数据 完整返回，我们一般会判断 两个值
+            if (ajaxObj.readyState == 4 && ajaxObj.status == 200) {
+                // 如果能够进到这个判断 说明 数据 完美的回来了,并且请求的页面是存在的
+                // 5.在注册的事件中 获取 返回的 内容 并修改页面的显示
+                console.log('数据返回成功');
+
+                // 数据是保存在 异步对象的 属性中
+                console.log(ajaxObj.responseText);
+
+                // 修改页面的显示
+                document.querySelector('h1').innerHTML = ajaxObj.responseText;
+            }
+        }
+    }
+</script>
+</body>
+</html>
+
+post 请求举例：
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<h1>Ajax 发送 get 请求</h1>
+<input type="button" value="发送put_ajax请求" id='btnAjax'>
+<script type="text/javascript">
+
+    // 异步对象
+    var xhr = new XMLHttpRequest();
+
+    // 设置属性
+    xhr.open('post', '02.post.php');
+
+    // 如果想要使用post提交数据,必须添加此行
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    // 将数据通过send方法传递
+    xhr.send('name=fox&age=18');
+
+    // 发送并接受返回值
+    xhr.onreadystatechange = function () {
+        // 这步为判断服务器是否正确响应
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            alert(xhr.responseText);
+        }
+    };
+</script>
+</body>
+</html>
