@@ -1,0 +1,35 @@
+跨域通信的几种方式
+方式如下：
+
+1、JSONP
+
+2、WebSocket
+
+3、CORS
+
+4、Hash
+
+5、postMessage
+
+上面这五种方式，在面试时，都要说出来。
+
+1、JSONP
+面试会问：JSONP的原理是什么？怎么实现的？
+
+在CORS和postMessage以前，我们一直都是通过JSONP来做跨域通信的。
+
+JSONP的原理：通过<script>标签的异步加载来实现的。比如说，实际开发中，我们发现，head标签里，可以通过<script>标签的src，里面放url，加载很多在线的插件。这就是用到了JSONP。
+
+JSONP的实现：
+
+比如说，客户端这样写：
+
+    <script src="http://www.smyhvae.com/?data=name&callback=myjsonp"></script>
+上面的src中，data=name是get请求的参数，myjsonp是和后台约定好的函数名。
+服务器端这样写：
+
+        myjsonp({
+            data: {}
+
+        })
+于是，本地要求创建一个myjsonp 的全局函数，才能将返回的数据执行出来。
